@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/Bluetooth" android:showAsAction="always" android:title="@string/BT_label"></item><item android:id="@+id/MODE" android:title="@string/MODE_label" android:orderInCategory="100" android:showAsAction="ifRoom">
+        <menu>
+            <item android:id="@+id/Spectrum" android:title="@string/Spectrum_label"/>
+            <item android:id="@+id/Timeline" android:title="@string/Timeline_label"/>
+        </menu>
+    </item><item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="101"
+        android:title="@string/menu_settings"/>
+    
+    <item android:id="@+id/Shutdown" android:title="@string/Shutdown_label" android:showAsAction="never" android:orderInCategory="102"></item>
+    
+    
+
+</menu>

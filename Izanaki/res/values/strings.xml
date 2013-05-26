@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Izanaki</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="BT_label">Bluetooth</string>
+    <string name="Shutdown_label">Shutdown</string>
+    <string name="MODE_label">MODE</string>
+    <string name="Spectrum_label">Development</string>
+    <string name="Timeline_label">Pitch Graph</string>
+
+</resources>

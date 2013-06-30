@@ -111,7 +111,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 			int y1 = (int)(Math.log10(buffer1[i])*20);	
 			canvas.drawLine(i*8, 470, i*8, 470-y1, paint);  //PowerSpectrum•`‰æ
 			
-			int y2 =(int)(buffer2[i*2]*1.0E1);  
+			int y2 =(int)(buffer2[i*2]/1.0E4);  
 			canvas.drawLine(i, 100, i, 100-y2, paint);  //autocorr•`‰æ
 			
 		}
@@ -141,7 +141,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		paint.setColor(Color.CYAN);
 		canvas.drawText("HNR", 300, 580, paint);
 		paint.setColor(Color.GREEN);
-		canvas.drawText("CMSDF", 20, 30, paint);
+		canvas.drawText("ACF", 20, 30, paint);
 		canvas.drawText("PowerSpectrum", 20, 250, paint);
 		canvas.drawText("F0", 10, 580, paint);
 		paint.setTextSize(36);

@@ -67,8 +67,8 @@ public class VoiceCapt implements Runnable {
 //		double[] brt_acf = new double[fftSize];
 		double[] m = new double[fftSize]; //SDF‚Ì2æ€ŒvŽZ—p”z—ñ
 //		double[] NSDF = new double[fftSize];
-		double[] CMNDF = new double[fftSize/2]; //Cumulative Mean Normalized Diffrerence Fucntion
-		double[] SUM_CMNDF = new double[fftSize/2];
+//		double[] CMNDF = new double[fftSize/2]; //Cumulative Mean Normalized Diffrerence Fucntion
+//		double[] SUM_CMNDF = new double[fftSize/2];
 
 		DoubleFFT_1D fft = new DoubleFFT_1D(fftSize);
 
@@ -90,10 +90,10 @@ public class VoiceCapt implements Runnable {
 			
 //			brt_acf = bruteForceACF(data, fftSize);   //ŒŸŽZ—p@Ž©ŒÈ‘ŠŠÖŠÖ”‚ð’¼ÚŒvŽZ
 
-			m[fftSize-1]= data[0]*data[0]+data[fftSize-1]*data[fftSize-1];	//SDF‚Ì2æ€‚ðì¬
+/*			m[fftSize-1]= data[0]*data[0]+data[fftSize-1]*data[fftSize-1];	//SDF‚Ì2æ€‚ðì¬
 			for(int i=fftSize-2; i>=0; i--){
 				m[i] = m[i+1]+data[fftSize-1-i]*data[fftSize-1-i]+data[i]*data[i];
-			}
+			}*/
 			
 			
 			fft.realForward(data);  //FFT
@@ -115,13 +115,13 @@ public class VoiceCapt implements Runnable {
 				NSDF[i]=2*acf[i]/m[i];
 			}*/
 			
-			CMNDF[0]=1;		//CMNDFŒvŽZ
+/*			CMNDF[0]=1;		//CMNDFŒvŽZ
 			Arrays.fill(SUM_CMNDF, 0);			
 			for(int i=1; i<fftSize/2; i++){
 				double d = m[i]-2*acf[i];
 				SUM_CMNDF[i]+=SUM_CMNDF[i-1]+d;
 				CMNDF[i]=d*i/SUM_CMNDF[i];
-			}
+			}*/
 			
 /*			for(int i=1; i<fftSize; i++){  //Ž©ŒÈ‘ŠŠÖŠÖ”‚ð³‹K‰»  ƒrƒ…[‚É•\Ž¦‚µ‚È‚¢ê‡‚ÍÈ—ª‰Â
 				acf[i] /= acf[0];
@@ -129,11 +129,11 @@ public class VoiceCapt implements Runnable {
 			acf[0] = 1;*/
 			
 			logger.addSplit("ACF");
-			int peakIndex = find_dip(CMNDF, fftSize/2);
+			int peakIndex = find_peak2(acf, fftSize/2);
 			logger.addSplit("peak picking");
 			double ra = Ra(peakIndex, power, fftSize);
 			logger.addSplit("HNR");
-			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, peakIndex, ra);
+			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, acf, fftSize/2, peakIndex, ra);
 			logger.addSplit("surface draw");
 			logger.dumpToLog();
 		}

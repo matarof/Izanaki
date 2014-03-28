@@ -21,7 +21,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 	private int fftsize = 2048;
 	private int pitchTimeLine[] = new int[800];
 	private int pitchTimeLinePosition = 0;
-	private int modeSelector = 1;
+	private int modeSelector = 0;
 	static private float freqOfCArray[] = {16.352f, 32.703f, 65.406f, 130.81f, 261.63f, 523.25f, 1046.5f, 2093.0f, 4186.0f, 8372.0f, 16744.0f};
 	static private float noteRangeArray[] = {1.0293022f, 1.0905077f, 1.1553527f, 1.2240535f, 1.2968396f, 1.3739536f, 1.4556532f, 1.5422108f, 1.6339155f, 1.7310731f, 1.8340081f, 1.9430639f};
 	static private String noteArray[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
@@ -67,7 +67,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 	}
 	
 	@Override
-	public void surfaceDraw(double buffer1[], int bufSize, double buffer2[], int bufSize2, int peakIndex, double ra){
+	public void surfaceDraw(double buffer1[], int bufSize, double buffer2[], int bufSize2, double buffer3[], int bufSize3, int peakIndex, double ra){
 		
 		 if (!isAttached) {      //surfaceCreatedÇ™åƒÇŒÇÍÇÈëOÇ…lockCanvasÇ∑ÇÈÇ∆ÉGÉâÅ[Ç∆Ç»ÇÈÇΩÇﬂÉ`ÉFÉbÉN
 	            return;  
@@ -80,7 +80,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		pitchTimeLine[pitchTimeLinePosition] = (int)freq;
 		switch(modeSelector){
 		case 0:
-			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, peakIndex, ra, freq, note);
+			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, ra, freq, note);
 			break;
 		case 1:
 			doTimeLineDraw(canvas, peakIndex, freq, note, pitchTimeLine, pitchTimeLinePosition);
@@ -98,7 +98,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 	}
 
-	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2, int peakIndex, double ra, float freq, String note){
+	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note){
 
 		Paint paint = new Paint();
 		paint.setColor(Color.GREEN);
@@ -109,12 +109,24 @@ SurfaceHolder.Callback, SpectrumDraw {
 		for(int i=0; i<bufSize2; i++){
 						
 			int y1 = (int)(Math.log10(buffer1[i])*20);	
-			canvas.drawLine(i*8, 670, i*8, 670-y1, paint);  //PowerSpectrumï`âÊ
-			
+			canvas.drawLine(i, 670, i, 670-y1, paint);  //PowerSpectrumï`âÊ
+
 			int y2 =(int)(buffer2[i]*1.0E1);  
 			canvas.drawLine(i, 200, i, 200-y2*2, paint);  //autocorrï`âÊ
 			
 		}
+		
+		paint.setColor(Color.MAGENTA);
+		
+		for(int i=0; i<bufSize2; i++){
+			
+			int y1 = (int)(Math.log10(buffer3[i])*10);	
+			canvas.drawLine(i, 670, i, 670-y1, paint);  //PowerSpectrumï`âÊ
+
+		}
+		
+		
+		
 		
 			
 		paint.setTextSize(90);

@@ -18,7 +18,7 @@ public class VoiceCapt implements Runnable {
 	private int fftSize;
 	AudioRecord audioRec = null;
 	private double[] window;
-	
+	private int LPCOrder=50; //LPC次数
 
 	
 	public SpectrumDraw spectrumDrawListner;
@@ -69,10 +69,12 @@ public class VoiceCapt implements Runnable {
 //		double[] NSDF = new double[fftSize];
 		double[] CMNDF = new double[fftSize/2]; //Cumulative Mean Normalized Diffrerence Fucntion
 		double[] SUM_CMNDF = new double[fftSize/2];
+		double[] LPCSpectrum = new double[fftSize/2]; //LPCスペクトラム格納用配列
+		double[] a = new double[fftSize*2]; //LPCパラメーター
+		double sigma2; 
 
 		DoubleFFT_1D fft = new DoubleFFT_1D(fftSize);
-
-		
+				
 		while(isRecording){
 			TimingLogger logger = new TimingLogger("TAG_TEST", "testTimingLogger");
 			audioRec.read(readbuffer, 0, bufSize);
@@ -123,17 +125,27 @@ public class VoiceCapt implements Runnable {
 				CMNDF[i]=d*i/SUM_CMNDF[i];
 			}
 			
-/*			for(int i=1; i<fftSize; i++){  //自己相関関数を正規化  ビューに表示しない場合は省略可
+			for(int i=1; i<fftSize; i++){  //自己相関関数を正規化  ビューに表示しない場合は省略可
 				acf[i] /= acf[0];
 			}
-			acf[0] = 1;*/
+			acf[0] = 1;
+			
+			
+			LPCParamContainer LPCParam = Lev(acf);
+			a = LPCParam.getLPCParam();
+			sigma2 = LPCParam.getLPCSigma2();
+			fft.realForward(a);
+			for(int i=0; i<fftSize/2; i++){
+				LPCSpectrum[i]=(a[i*2]*a[i*2]+a[i*2+1]*a[i*2+1])*sigma2*sigma2;
+			}
+			
 			
 			logger.addSplit("ACF");
 			int peakIndex = find_dip(CMNDF, fftSize/2);
 			logger.addSplit("peak picking");
 			double ra = Ra(peakIndex, power, fftSize);
 			logger.addSplit("HNR");
-			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, peakIndex, ra);
+			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, LPCSpectrum, fftSize/2, peakIndex, ra);
 			logger.addSplit("surface draw");
 			logger.dumpToLog();
 		}
@@ -202,6 +214,43 @@ public class VoiceCapt implements Runnable {
 		}
 		return peakIndex;		
 	}
+	
+	private LPCParamContainer Lev(double r[]){
+		double[] a = new double[LPCOrder+1];  //LPC parameter
+		double[] rc = new double[LPCOrder+1];  //PARCOR
+		
+		rc[0] =(-r[1])/r[0];
+		a[0] = (double)1.0;
+		a[1] = rc[0];
+		double err = r[0] + r[1]*rc[0];
+		
+		for (int i=2; i<=LPCOrder; i++){
+			
+			//compute PARCOR
+			double s = 0;
+			for(int j=0; j<i; j++){
+				s += r[i-j]*a[j];  //(*)
+			}
+			rc[i-1] = -s/err;
+			
+			//update a[]
+			for(int j=1; j<=i/2; j++){
+				int l = i-j;
+				double at =a[j] + rc[i-1]*a[l];  //at=a_temp
+				a[l] += rc[i-1]*a[j];
+				a[j] = at;
+			}
+			a[i] = rc[i-1];
+			err += rc[i-1]*s;  //(*)より err*=1.0-(rc[i-1])^2と同義
+					
+		}
+		
+		LPCParamContainer LPCParam = new LPCParamContainer(a, err, LPCOrder, fftSize);
+		return LPCParam;
+		
+		
+	}
+	
 	
 	private int find_dip(double data[], int dataSize){  //threshold以下のdipのうち最初に出現するインデックス値を返す
 		double mv = 0.1; 

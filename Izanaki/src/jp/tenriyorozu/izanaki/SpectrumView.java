@@ -19,7 +19,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 	
 	private float screenWidth, screenHeight;
 	private int fftsize = 2048;
-	private int pitchTimeLine[] = new int[800];
+	private int pitchTimeLine[] = new int[540];
 	private int pitchTimeLinePosition = 0;
 	private int modeSelector = 0;
 	static private float freqOfCArray[] = {16.352f, 32.703f, 65.406f, 130.81f, 261.63f, 523.25f, 1046.5f, 2093.0f, 4186.0f, 8372.0f, 16744.0f};
@@ -87,7 +87,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		}
 		holder.unlockCanvasAndPost(canvas);
 		pitchTimeLinePosition++;
-		if(pitchTimeLinePosition == 400){
+		if(pitchTimeLinePosition == 250){
 			pitchTimeLinePosition = 0;
 		}
 		
@@ -109,10 +109,10 @@ SurfaceHolder.Callback, SpectrumDraw {
 		for(int i=0; i<bufSize2; i++){
 						
 			int y1 = (int)(Math.log10(buffer1[i])*20);	
-			canvas.drawLine(i, 670, i, 670-y1, paint);  //PowerSpectrum•`‰æ
+			canvas.drawLine(i, 470, i, 470-y1, paint);  //PowerSpectrum•`‰æ
 
 			int y2 =(int)(buffer2[i]*1.0E1);  
-			canvas.drawLine(i, 200, i, 200-y2*2, paint);  //autocorr•`‰æ
+			canvas.drawLine(i, 100, i, 100-y2, paint);  //CMSDF•`‰æ
 			
 		}
 		
@@ -121,51 +121,49 @@ SurfaceHolder.Callback, SpectrumDraw {
 		for(int i=0; i<bufSize2; i++){
 			
 			int y1 = (int)(buffer3[i]);	
-			canvas.drawLine(i, 670, i, 670-y1, paint);  //PowerSpectrum•`‰æ
+			canvas.drawLine(i, 470, i, 470-y1-80, paint);  //LPC Spectrum•`‰æ
 
 		}
-		
-		
 		
 		
 			
 		paint.setTextSize(90);
 		paint.setColor(Color.GREEN);
 		if(freq != -1){
-			canvas.drawText(String.valueOf((int)freq), 20, 900, paint);
+			canvas.drawText(String.valueOf((int)freq), 20, 700, paint);
 		}
 		else{
-			canvas.drawText("--", 20, 900, paint);
+			canvas.drawText("--", 20, 700, paint);
 		}
 		
 		paint.setTextSize(44);
 		paint.setColor(Color.LTGRAY);
-		canvas.drawText(note, 190, 790, paint);
+		canvas.drawText(note, 190, 590, paint);
 		
 		DecimalFormat exFormat = new DecimalFormat("###.#"); 
 		String strRa = exFormat.format(ra);
 		paint.setTextSize(90);
 		paint.setColor(Color.CYAN);
-		canvas.drawText(strRa, 500, 900, paint);
+		canvas.drawText(strRa, 300, 700, paint);
 		
 		
 		paint.setTextSize(24);
 		paint.setColor(Color.CYAN);
-		canvas.drawText("HNR", 500, 780, paint);
+		canvas.drawText("HNR", 300, 580, paint);
 		paint.setColor(Color.GREEN);
-		canvas.drawText("CMSDF", 20, 230, paint);
-		canvas.drawText("PowerSpectrum", 20, 450, paint);
-		canvas.drawText("F0", 10, 780, paint);
+		canvas.drawText("CMSDF", 20, 30, paint);
+		canvas.drawText("PowerSpectrum", 20, 250, paint);
+		canvas.drawText("F0", 10, 580, paint);
 		paint.setTextSize(36);
-		canvas.drawText("Hz", 190, 900, paint);
+		canvas.drawText("Hz", 190, 700, paint);
 		paint.setColor(Color.CYAN);
-		canvas.drawText("dB", 680, 900, paint);
+		canvas.drawText("dB", 480, 700, paint);
 		
 		paint.setColor(Color.RED);
 		paint.setStrokeWidth(4);
 		if(peakIndex != 0){
 			canvas.drawLine(peakIndex, 0, peakIndex, 200, paint);
-			canvas.drawLine(freq/(44100/fftsize)*8, 520, freq/(44100/fftsize)*8, 670, paint);
+			canvas.drawLine(freq/(44100/fftsize), 320, freq/(44100/fftsize), 470, paint);
 		}
 
 		
@@ -179,13 +177,13 @@ SurfaceHolder.Callback, SpectrumDraw {
 		canvas.drawColor(Color.BLACK);
 								
 		paint.setStrokeWidth(4);
-		for(int i=0; i<400; i++){
+		for(int i=0; i<250; i++){
 			if(pitchTimeLine[i]>0){
 				canvas.drawPoint(40+i*2, 570-pitchTimeLine[i], paint);
 			}
 		}
 		
-		paint.setTextSize(150);
+		paint.setTextSize(90);
 		paint.setColor(Color.GREEN);
 		if(freq != -1){
 			canvas.drawText(String.valueOf((int)freq), 20, 700, paint);
@@ -194,21 +192,21 @@ SurfaceHolder.Callback, SpectrumDraw {
 			canvas.drawText("--", 20, 700, paint);
 		}
 	
-		paint.setTextSize(150);
+		paint.setTextSize(90);
 		paint.setColor(Color.LTGRAY);
-		canvas.drawText(note, 500, 700, paint);
+		canvas.drawText(note, 300, 700, paint);
 		
 		paint.setTextSize(24);
 		paint.setColor(Color.GREEN);
 		canvas.drawText("Pitch", 0, 30, paint);
-		paint.setTextSize(50);
-		canvas.drawText("Hz", 350, 700, paint);
+		paint.setTextSize(36);
+		canvas.drawText("Hz", 190, 700, paint);
 
 		
 		paint.setColor(Color.RED);
 		paint.setStrokeWidth(2);
 		if(pitchTimeLine[pitchTimeLinePosition]>0){
-			canvas.drawLine(0, 570-pitchTimeLine[pitchTimeLinePosition], 799, 570-pitchTimeLine[pitchTimeLinePosition], paint);
+			canvas.drawLine(0, 570-pitchTimeLine[pitchTimeLinePosition], 539, 570-pitchTimeLine[pitchTimeLinePosition], paint);
 		}
 				
 		paint.setColor(Color.GREEN);

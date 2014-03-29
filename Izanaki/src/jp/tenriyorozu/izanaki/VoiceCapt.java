@@ -8,6 +8,10 @@ import android.util.TimingLogger;
 
 
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
+import org.mklab.cga.eigen.EigenVerifiedSolution;
+import org.mklab.cga.polynomial.DKA;
+import org.mklab.nfc.matrix.NumericalMatrix;
+import org.mklab.nfc.scalar.DoubleNumber;
 
 public class VoiceCapt implements Runnable {
 
@@ -18,7 +22,9 @@ public class VoiceCapt implements Runnable {
 	private int fftSize;
 	AudioRecord audioRec = null;
 	private double[] window;
-	private int LPCOrder=50; //LPC次数
+	private int LPCOrder=30; //LPC次数
+	private EigenVerifiedSolution eigenvalue;
+	
 
 	
 	public SpectrumDraw spectrumDrawListner;
@@ -125,7 +131,7 @@ public class VoiceCapt implements Runnable {
 				CMNDF[i]=d*i/SUM_CMNDF[i];
 			}
 			
-			for(int i=1; i<fftSize; i++){  //自己相関関数を正規化  ビューに表示しない場合は省略可
+			for(int i=1; i<fftSize; i++){  //自己相関関数を正規化  ビューに表示しない場合は省略可,levに渡す場合はあったほうがよい
 				acf[i] /= acf[0];
 			}
 			acf[0] = 1;
@@ -136,9 +142,20 @@ public class VoiceCapt implements Runnable {
 			sigma2 = LPCParam.getLPCSigma2();
 			fft.realForward(a);
 			for(int i=0; i<fftSize/2; i++){
-				LPCSpectrum[i]=-10*Math.log10(a[i*2]*a[i*2]+a[i*2+1]*a[i*2+1])+20*Math.log10(sigma2);
+				LPCSpectrum[i]=-10*Math.log10(a[i*2]*a[i*2]+a[i*2+1]*a[i*2+1]);  //+20*Math.log10(sigma2); 誤差関数の乗算はピーク検出には不要、高速化のため省略
+			}
+			DoubleNumber[] LPCParamNFC = new DoubleNumber[LPCOrder+1];
+			for(int i=0; i<LPCOrder+1; i++){
+				DoubleNumber n = new DoubleNumber(a[i]);
+				LPCParamNFC[i]=n;
 			}
 			
+			NumericalMatrix<DoubleNumber> LPCParamMatrix = new NumericalMatrix<DoubleNumber>(LPCParamNFC);
+			
+			
+			DKA dka = new DKA();
+			
+			eigenvalue = dka.getRootErrorWithEigenError();
 			
 			logger.addSplit("ACF");
 			int peakIndex = find_dip(CMNDF, fftSize/2);
@@ -215,7 +232,11 @@ public class VoiceCapt implements Runnable {
 		return peakIndex;		
 	}
 	
-	private LPCParamContainer Lev(double r[]){
+
+		
+
+	
+	private LPCParamContainer Lev(double r[]){  //Levinson Durgin アルゴリズムによるLPCパラメーター計算
 		double[] a = new double[LPCOrder+1];  //LPC parameter
 		double[] rc = new double[LPCOrder+1];  //PARCOR
 		
@@ -250,8 +271,7 @@ public class VoiceCapt implements Runnable {
 		
 		
 	}
-	
-	
+		
 	private int find_dip(double data[], int dataSize){  //threshold以下のdipのうち最初に出現するインデックス値を返す
 		double mv = 0.1; 
 		int mi = 0;

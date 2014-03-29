@@ -1,6 +1,6 @@
 package jp.tenriyorozu.izanaki;
 
-public class LPCParamContainer {
+public class LPCParamContainer {  //LPCパラメーターと誤差関数を格納する戻り値用クラス
 	double[] a;
 	double[] converted;
 	double sigma2;

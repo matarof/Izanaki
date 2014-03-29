@@ -120,7 +120,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 		for(int i=0; i<bufSize2; i++){
 			
-			int y1 = (int)(Math.log10(buffer3[i])*10);	
+			int y1 = (int)(buffer3[i]);	
 			canvas.drawLine(i, 670, i, 670-y1, paint);  //PowerSpectrum•`‰æ
 
 		}

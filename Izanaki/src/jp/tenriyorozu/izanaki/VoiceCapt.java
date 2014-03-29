@@ -136,7 +136,7 @@ public class VoiceCapt implements Runnable {
 			sigma2 = LPCParam.getLPCSigma2();
 			fft.realForward(a);
 			for(int i=0; i<fftSize/2; i++){
-				LPCSpectrum[i]=(a[i*2]*a[i*2]+a[i*2+1]*a[i*2+1])*sigma2*sigma2;
+				LPCSpectrum[i]=-10*Math.log10(a[i*2]*a[i*2]+a[i*2+1]*a[i*2+1])+20*Math.log10(sigma2);
 			}
 			
 			

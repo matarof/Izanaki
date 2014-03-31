@@ -203,7 +203,7 @@ public class VoiceCapt implements Runnable {
 		return peakIndex;		
 	}
 	
-	private int find_dip(double data[], int dataSize){  //threshold以下のdipのうち最初に出現するインデックス値を返す
+	private int find_dip(double data[], int dataSize){  //threshold以下のdipのうち最初に出現するインデックス値を返す.
 		double mv = 0.1; 
 		int mi = 0;
 		

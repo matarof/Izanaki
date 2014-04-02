@@ -19,7 +19,7 @@ public class VoiceCapt implements Runnable {
 	private int fftSize;
 	AudioRecord audioRec = null;
 	private double[] window;
-	private int LPCOrder=10; //LPC次数
+	private int LPCOrder=30; //LPC次数
 	
 	
 	public SpectrumDraw spectrumDrawListner;
@@ -68,7 +68,7 @@ public class VoiceCapt implements Runnable {
 //		double[] brt_acf = new double[fftSize];
 		double[] m = new double[fftSize]; //SDFの2乗項計算用配列
 //		double[] NSDF = new double[fftSize];
-		double[] CMNDF = new double[fftSize/2]; //Cumulative Mean Normalized Diffrerence Fucntion
+		double[] CMNDF = new double[fftSize/2]; //Cumulative Mean Normalized Difference Function
 		double[] SUM_CMNDF = new double[fftSize/2];
 		double[] LPCSpectrum = new double[fftSize/2]; //LPCスペクトラム格納用配列
 		double[] a = new double[fftSize*2]; //LPCパラメーター
@@ -142,7 +142,8 @@ public class VoiceCapt implements Runnable {
 			}
 			
 			b = LPCParam.getLPCParam();
-		
+			PolynomialRootSolver pRS = new PolynomialRootSolver(b);
+			
 			
 			logger.addSplit("ACF");
 			int peakIndex = find_dip(CMNDF, fftSize/2);

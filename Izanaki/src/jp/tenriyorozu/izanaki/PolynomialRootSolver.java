@@ -6,9 +6,13 @@ import org.ejml.factory.EigenDecomposition;
 import org.ejml.factory.DecompositionFactory;
 
 public class PolynomialRootSolver {
-
-	public PolynomialRootSolver() {
+	
+	double[] coefficients;
+	
+	
+	public PolynomialRootSolver(double[] c) {
 		// TODO Auto-generated constructor stub
+		this.coefficients = c;
 	}
 
 	public static Complex64F[] findRoots(double[] coefficients){
@@ -26,8 +30,7 @@ public class PolynomialRootSolver {
 		}
 		
 		EigenDecomposition<DenseMatrix64F> evd = DecompositionFactory.eig(n, false);
-		
-		
+				
 		evd.decompose(c);
 		
 		Complex64F[] roots = new Complex64F[n];

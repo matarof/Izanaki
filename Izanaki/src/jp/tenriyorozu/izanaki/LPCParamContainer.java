@@ -15,7 +15,11 @@ public class LPCParamContainer {  //LPCƒpƒ‰ƒ[ƒ^[‚ÆŒë·ŠÖ”‚ğŠi”[‚·‚é–ß‚è’l—pƒ
 		}
 	}
 
-	public double [] getLPCParam(){
+	public double[] getLPCParam(){
+		return a;
+	}
+	
+	public double[] getLPCParamZeroFilled(){
 		return converted;
 	}
 	

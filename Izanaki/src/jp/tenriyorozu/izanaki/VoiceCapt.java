@@ -8,10 +8,7 @@ import android.util.TimingLogger;
 
 
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
-import org.mklab.cga.eigen.EigenVerifiedSolution;
-import org.mklab.cga.polynomial.DKA;
-import org.mklab.nfc.matrix.NumericalMatrix;
-import org.mklab.nfc.scalar.DoubleNumber;
+
 
 public class VoiceCapt implements Runnable {
 
@@ -22,10 +19,8 @@ public class VoiceCapt implements Runnable {
 	private int fftSize;
 	AudioRecord audioRec = null;
 	private double[] window;
-	private int LPCOrder=30; //LPC次数
-	private EigenVerifiedSolution eigenvalue;
+	private int LPCOrder=10; //LPC次数
 	
-
 	
 	public SpectrumDraw spectrumDrawListner;
 	
@@ -77,6 +72,7 @@ public class VoiceCapt implements Runnable {
 		double[] SUM_CMNDF = new double[fftSize/2];
 		double[] LPCSpectrum = new double[fftSize/2]; //LPCスペクトラム格納用配列
 		double[] a = new double[fftSize*2]; //LPCパラメーター
+		double[] b = new double[LPCOrder+1];
 		double sigma2; 
 
 		DoubleFFT_1D fft = new DoubleFFT_1D(fftSize);
@@ -138,24 +134,15 @@ public class VoiceCapt implements Runnable {
 			
 			
 			LPCParamContainer LPCParam = Lev(acf);
-			a = LPCParam.getLPCParam();
-			sigma2 = LPCParam.getLPCSigma2();
+			a = LPCParam.getLPCParamZeroFilled();
+			//sigma2 = LPCParam.getLPCSigma2();
 			fft.realForward(a);
 			for(int i=0; i<fftSize/2; i++){
 				LPCSpectrum[i]=-10*Math.log10(a[i*2]*a[i*2]+a[i*2+1]*a[i*2+1]);  //+20*Math.log10(sigma2); 誤差関数の乗算はピーク検出には不要、高速化のため省略
 			}
-			DoubleNumber[] LPCParamNFC = new DoubleNumber[LPCOrder+1];
-			for(int i=0; i<LPCOrder+1; i++){
-				DoubleNumber n = new DoubleNumber(a[i]);
-				LPCParamNFC[i]=n;
-			}
 			
-			NumericalMatrix<DoubleNumber> LPCParamMatrix = new NumericalMatrix<DoubleNumber>(LPCParamNFC);
-			
-			
-			DKA dka = new DKA();
-			
-			eigenvalue = dka.getRootErrorWithEigenError();
+			b = LPCParam.getLPCParam();
+		
 			
 			logger.addSplit("ACF");
 			int peakIndex = find_dip(CMNDF, fftSize/2);

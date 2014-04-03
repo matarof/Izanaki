@@ -142,7 +142,7 @@ public class VoiceCapt implements Runnable {
 			}
 			
 			b = LPCParam.getLPCParam();
-			PolynomialRootSolver pRS = new PolynomialRootSolver(b);
+			FormantEstimator pRS = new FormantEstimator(b, SAMPLING_RATE);
 			
 			
 			logger.addSplit("ACF");

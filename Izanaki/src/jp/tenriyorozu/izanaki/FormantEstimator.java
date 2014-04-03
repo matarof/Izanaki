@@ -33,7 +33,7 @@ public class FormantEstimator {
 		int an=0;
 		for(int i=0; i<cn-1; i++){
 			if (roots[i].getImaginary() >= 0){
-				sorter.put(Math.atan2(roots[i].getReal(), roots[i].getImaginary()), an);
+				sorter.put(Math.atan2(roots[i].getImaginary(), roots[i].getReal()), an);
 				an++;
 			}
 		}
@@ -44,8 +44,9 @@ public class FormantEstimator {
 		double[] frqs = new double[an];
 		double[] bw = new double[an];
 
+		int fn = 0;
 		for(int i=0; i<an-2; i++){
-			int fn = 0;
+			
 			frqs[i] = angz[i]*(fs/(2*Math.PI));
 			bw[i] = -1/2*(fs/(2*Math.PI))* Math.log(roots[indices[i]].getMagnitude()); 
 			

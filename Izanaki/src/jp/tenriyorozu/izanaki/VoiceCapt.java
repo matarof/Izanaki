@@ -74,7 +74,8 @@ public class VoiceCapt implements Runnable {
 		double[] a = new double[fftSize*2]; //LPCパラメーター
 		double[] b = new double[LPCOrder+1];
 		double sigma2; 
-
+		double[] formants;
+		
 		DoubleFFT_1D fft = new DoubleFFT_1D(fftSize);
 				
 		while(isRecording){
@@ -142,7 +143,8 @@ public class VoiceCapt implements Runnable {
 			}
 			
 			b = LPCParam.getLPCParam();
-			FormantEstimator pRS = new FormantEstimator(b, SAMPLING_RATE);
+			FormantEstimator fE = new FormantEstimator(b, SAMPLING_RATE);
+			formants = fE.getFormants();
 			
 			
 			logger.addSplit("ACF");
@@ -150,7 +152,7 @@ public class VoiceCapt implements Runnable {
 			logger.addSplit("peak picking");
 			double ra = Ra(peakIndex, power, fftSize);
 			logger.addSplit("HNR");
-			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, LPCSpectrum, fftSize/2, peakIndex, ra);
+			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, LPCSpectrum, fftSize/2, peakIndex, ra, formants);
 			logger.addSplit("surface draw");
 			logger.dumpToLog();
 		}

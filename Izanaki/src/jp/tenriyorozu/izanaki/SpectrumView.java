@@ -67,7 +67,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 	}
 	
 	@Override
-	public void surfaceDraw(double buffer1[], int bufSize, double buffer2[], int bufSize2, double buffer3[], int bufSize3, int peakIndex, double ra){
+	public void surfaceDraw(double buffer1[], int bufSize, double buffer2[], int bufSize2, double buffer3[], int bufSize3, int peakIndex, double ra, double[] formants){
 		
 		 if (!isAttached) {      //surfaceCreatedが呼ばれる前にlockCanvasするとエラーとなるためチェック
 	            return;  
@@ -80,7 +80,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		pitchTimeLine[pitchTimeLinePosition] = (int)freq;
 		switch(modeSelector){
 		case 0:
-			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, ra, freq, note);
+			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, ra, freq, note, formants);
 			break;
 		case 1:
 			doTimeLineDraw(canvas, peakIndex, freq, note, pitchTimeLine, pitchTimeLinePosition);
@@ -98,7 +98,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 	}
 
-	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note){
+	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note, double[] formants){
 
 		Paint paint = new Paint();
 		paint.setColor(Color.GREEN);
@@ -142,10 +142,15 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 		DecimalFormat exFormat = new DecimalFormat("###.#"); 
 		String strRa = exFormat.format(ra);
-		paint.setTextSize(90);
+		String strFor0 = exFormat.format(formants[0]);
+		String strFor1 = exFormat.format(formants[1]);
+		String strFor2 = exFormat.format(formants[2]);
+		paint.setTextSize(30);
 		paint.setColor(Color.CYAN);
-		canvas.drawText(strRa, 300, 700, paint);
-		
+		canvas.drawText(strRa, 300, 600, paint);
+		canvas.drawText(strFor0, 300, 640, paint);
+		canvas.drawText(strFor1, 300, 670, paint);
+		canvas.drawText(strFor2, 300, 710, paint);
 		
 		paint.setTextSize(24);
 		paint.setColor(Color.CYAN);

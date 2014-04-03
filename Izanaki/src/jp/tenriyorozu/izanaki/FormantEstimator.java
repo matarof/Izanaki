@@ -12,8 +12,6 @@ public class FormantEstimator {
 	
 	double[] coefficients;
 	Complex64F[] roots;
-	double[] frqs;
-	double[] bw;
 	int cn;
 	int fs;
 	double formants[];
@@ -24,6 +22,7 @@ public class FormantEstimator {
 		this.cn = coefficients.length;
 		this.roots=this.polynomialRootSolver(this.coefficients);
 		this.fs = fs;
+		this.formants = new double[cn];
 		this.doFormantEstimate();
 	}
 
@@ -32,20 +31,22 @@ public class FormantEstimator {
 		TreeMap<Double, Integer> sorter = new TreeMap<Double, Integer>(); //添字付きソートのためのツリーマップ
 		
 		int an=0;
-		for(int i=0; i<cn; i++){
+		for(int i=0; i<cn-1; i++){
 			if (roots[i].getImaginary() >= 0){
 				sorter.put(Math.atan2(roots[i].getReal(), roots[i].getImaginary()), an);
+				an++;
 			}
-			an++;
 		}
 		
 		Integer[] indices = sorter.values().toArray(new Integer[0]);
 		Double[] angz = sorter.keySet().toArray(new Double[0]);
 		
+		double[] frqs = new double[an];
+		double[] bw = new double[an];
 
-		for(int i=0; i<an; i++){
+		for(int i=0; i<an-2; i++){
 			int fn = 0;
-			frqs[i] = angz[i]*(fs/2*Math.PI);
+			frqs[i] = angz[i]*(fs/(2*Math.PI));
 			bw[i] = -1/2*(fs/(2*Math.PI))* Math.log(roots[indices[i]].getMagnitude()); 
 			
 			if(frqs[i]>90 && bw[i]<400){

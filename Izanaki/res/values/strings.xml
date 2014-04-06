@@ -9,5 +9,6 @@
     <string name="MODE_label">MODE</string>
     <string name="Spectrum_label">Development</string>
     <string name="Timeline_label">Pitch Graph</string>
+    <string name="Formant_Lavel">Formant</string>
 
 </resources>

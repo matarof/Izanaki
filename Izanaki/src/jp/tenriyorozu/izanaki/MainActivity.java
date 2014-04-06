@@ -51,6 +51,9 @@ public class MainActivity extends Activity {
 	    case R.id.Timeline:
 	    	SV.setModeSelector(1);
 	    	return true;
+	    case R.id.Formant:
+	    	SV.setModeSelector(2);
+	    	return true;
 	    case R.id.Shutdown:
 	        SV.stopVoiceCapt();
 	    	finish();

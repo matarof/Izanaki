@@ -21,7 +21,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 	private int fftsize = 2048;
 	private int pitchTimeLine[] = new int[540];
 	private int pitchTimeLinePosition = 0;
-	private int modeSelector = 0;
+	private int modeSelector = 2;
 	static private float freqOfCArray[] = {16.352f, 32.703f, 65.406f, 130.81f, 261.63f, 523.25f, 1046.5f, 2093.0f, 4186.0f, 8372.0f, 16744.0f};
 	static private float noteRangeArray[] = {1.0293022f, 1.0905077f, 1.1553527f, 1.2240535f, 1.2968396f, 1.3739536f, 1.4556532f, 1.5422108f, 1.6339155f, 1.7310731f, 1.8340081f, 1.9430639f};
 	static private String noteArray[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
@@ -77,13 +77,17 @@ SurfaceHolder.Callback, SpectrumDraw {
 		Canvas canvas = holder.lockCanvas();
 		float freq = getFreq(peakIndex);
 		String note = getPitchNote(freq);
+		String vowel = getVowel(formants);
 		pitchTimeLine[pitchTimeLinePosition] = (int)freq;
 		switch(modeSelector){
 		case 0:
-			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, ra, freq, note, formants);
+			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, ra, freq, note, formants, vowel);
 			break;
 		case 1:
 			doTimeLineDraw(canvas, peakIndex, freq, note, pitchTimeLine, pitchTimeLinePosition);
+			break;
+		case 2:
+			doFormantGraphDraw(canvas, freq, note, formants);
 		}
 		holder.unlockCanvasAndPost(canvas);
 		pitchTimeLinePosition++;
@@ -98,7 +102,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 	}
 
-	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note, double[] formants){
+	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note, double[] formants, String vowel){
 
 		Paint paint = new Paint();
 		paint.setColor(Color.GREEN);
@@ -147,28 +151,38 @@ SurfaceHolder.Callback, SpectrumDraw {
 		String strFor2 = exFormat.format(formants[2]);
 		paint.setTextSize(30);
 		paint.setColor(Color.CYAN);
-		canvas.drawText(strRa, 300, 600, paint);
-		canvas.drawText(strFor0, 300, 640, paint);
-		canvas.drawText(strFor1, 300, 670, paint);
-		canvas.drawText(strFor2, 300, 710, paint);
+		canvas.drawText(strRa, 380, 580, paint);
+		canvas.drawText(strFor0, 380, 640, paint);
+		canvas.drawText(strFor1, 380, 670, paint);
+		canvas.drawText(strFor2, 380, 700, paint);
+		canvas.drawText(vowel, 380, 730, paint);
 		
 		paint.setTextSize(24);
 		paint.setColor(Color.CYAN);
 		canvas.drawText("HNR", 300, 580, paint);
+		canvas.drawText("F1", 300, 640, paint);
+		canvas.drawText("F2", 300, 670, paint);
+		canvas.drawText("F3", 300, 700, paint);
 		paint.setColor(Color.GREEN);
 		canvas.drawText("CMSDF", 20, 30, paint);
 		canvas.drawText("PowerSpectrum", 20, 250, paint);
 		canvas.drawText("F0", 10, 580, paint);
 		paint.setTextSize(36);
 		canvas.drawText("Hz", 190, 700, paint);
-		paint.setColor(Color.CYAN);
-		canvas.drawText("dB", 480, 700, paint);
+
 		
 		paint.setColor(Color.RED);
 		paint.setStrokeWidth(4);
 		if(peakIndex != 0){
 			canvas.drawLine(peakIndex, 0, peakIndex, 200, paint);
+			canvas.drawLine((int)formants[0]/(44100/fftsize), 320, (int)formants[0]/(44100/fftsize), 470, paint);
+			canvas.drawLine((int)formants[1]/(44100/fftsize), 320, (int)formants[1]/(44100/fftsize), 470, paint);
+			canvas.drawLine((int)formants[2]/(44100/fftsize), 320, (int)formants[2]/(44100/fftsize), 470, paint);
+			canvas.drawLine((int)formants[3]/(44100/fftsize), 320, (int)formants[3]/(44100/fftsize), 470, paint);
+			
+			paint.setColor(Color.CYAN);
 			canvas.drawLine(freq/(44100/fftsize), 320, freq/(44100/fftsize), 470, paint);
+			
 		}
 
 		
@@ -229,6 +243,58 @@ SurfaceHolder.Callback, SpectrumDraw {
 		canvas.drawLine(40+pitchTimeLinePosition*2, 545, 40+pitchTimeLinePosition*2, 565, paint);
 	}
 
+	private void doFormantGraphDraw(Canvas canvas, float freq, String note, double[] formants){
+
+		Paint paint = new Paint();
+		paint.setColor(Color.GREEN);
+		paint.setAntiAlias(true);
+		canvas.drawColor(Color.BLACK);
+			
+		paint.setTextSize(90);
+		paint.setColor(Color.GREEN);
+		if(freq != -1){
+			canvas.drawText(String.valueOf((int)freq), 20, 700, paint);
+		}
+		else{
+			canvas.drawText("--", 20, 700, paint);
+		}
+	
+		paint.setTextSize(90);
+		paint.setColor(Color.LTGRAY);
+		canvas.drawText(note, 300, 700, paint);
+		
+		paint.setTextSize(24);
+		paint.setColor(Color.GREEN);
+		canvas.drawText("F1", 490, 620, paint);
+		canvas.drawText("F2", 0, 30, paint);
+		paint.setTextSize(36);
+		canvas.drawText("Hz", 190, 700, paint);
+
+		
+		paint.setColor(Color.RED);
+		paint.setStrokeWidth(8);
+		canvas.drawPoint(50+(int)formants[0]/2, 570-((int)formants[1]/6), paint);
+		
+		paint.setColor(Color.GREEN);
+		paint.setStrokeWidth(2);
+		for(int i=0; i<21; i++){
+			canvas.drawLine(40, 570-i*25, 50, 570-i*25, paint);
+			canvas.drawLine(50+i*25, 580, 50+i*25, 570, paint);
+		}
+		paint.setTextSize(12);
+		canvas.drawText("600", 0, 475, paint);
+		canvas.drawText("1200", 0, 375, paint);
+		canvas.drawText("1800", 0, 275, paint);
+		canvas.drawText("2400", 0, 175, paint);
+		canvas.drawText("3000", 0, 75, paint);
+
+		canvas.drawText("200", 140, 595, paint);
+		canvas.drawText("400", 240, 595, paint);
+		canvas.drawText("600", 340, 595, paint);
+		canvas.drawText("800", 440, 595, paint);
+
+	}
+	
 	private byte[] toBytes(int a) {
 		byte[] bs = new byte[4];
 		bs[3] = (byte) (0x000000ff & (a));
@@ -276,5 +342,28 @@ SurfaceHolder.Callback, SpectrumDraw {
 	
 	public void setModeSelector(int i){
 		modeSelector = i;
+	}
+	
+	private String getVowel(double[] formants){
+//		if (formants[0] > 600 && formants[0] < 1400 && formants[1] > 900  && formants[1] < 2000) return "‚ ";
+//		if (formants[0] > 100 && formants[0] < 410  && formants[1] > 1900 && formants[1] < 3500) return "‚¢";
+//		if (formants[0] > 100 && formants[0] < 700  && formants[1] > 1100 && formants[1] < 2000) return "‚¤";
+//		if (formants[0] > 400 && formants[0] < 800  && formants[1] > 1700 && formants[1] < 3000) return "‚¦";
+//		if (formants[0] > 300 && formants[0] < 900  && formants[1] > 500  && formants[1] < 1300) return "‚¨";
+		
+//		if (formants[0] > 600 && formants[0] < 1200 && formants[1] > 1000  && formants[1] < 2300) return "‚ ";
+//		if (formants[0] > 200 && formants[0] < 400  && formants[1] > 2000 && formants[1] < 4000) return "‚¢";
+//		if (formants[0] > 250 && formants[0] < 800  && formants[1] > 1800 && formants[1] < 3000) return "‚¤";
+//		if (formants[0] > 200 && formants[0] < 500  && formants[1] > 1100 && formants[1] < 2100) return "‚¦";
+//		if (formants[0] > 400 && formants[0] < 800  && formants[1] > 500  && formants[1] < 1700) return "‚¨";
+		
+		if (formants[0] > 600 && formants[0] < 1200 && formants[1] > 1000 && formants[1] < 2300) return "‚ ";
+		if (formants[0] > 200 && formants[0] < 400  && formants[1] > 2000 && formants[1] < 4000) return "‚¢";
+		if (formants[0] > 220 && formants[0] < 500  && formants[1] > 1000 && formants[1] < 1800) return "‚¤";
+		if (formants[0] > 400 && formants[0] < 650  && formants[1] > 2100 && formants[1] < 2800) return "‚¦";
+		if (formants[0] > 350 && formants[0] < 650  && formants[1] > 500  && formants[1] < 1000) return "‚¨";
+		
+		return "-";
+		
 	}
 }

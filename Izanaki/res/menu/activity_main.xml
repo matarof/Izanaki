@@ -4,6 +4,7 @@
         <menu>
             <item android:id="@+id/Spectrum" android:title="@string/Spectrum_label"/>
             <item android:id="@+id/Timeline" android:title="@string/Timeline_label"/>
+            <item android:id="@+id/Formant" android:title="@string/Formant_Lavel"/>
         </menu>
     </item><item
         android:id="@+id/menu_settings"

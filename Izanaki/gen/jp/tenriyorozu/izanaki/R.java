@@ -15,11 +15,12 @@ public final class R {
     }
     public static final class id {
         public static final int Bluetooth=0x7f070000;
+        public static final int Formant=0x7f070004;
         public static final int MODE=0x7f070001;
-        public static final int Shutdown=0x7f070005;
+        public static final int Shutdown=0x7f070006;
         public static final int Spectrum=0x7f070002;
         public static final int Timeline=0x7f070003;
-        public static final int menu_settings=0x7f070004;
+        public static final int menu_settings=0x7f070005;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -29,6 +30,7 @@ public final class R {
     }
     public static final class string {
         public static final int BT_label=0x7f040003;
+        public static final int Formant_Lavel=0x7f040008;
         public static final int MODE_label=0x7f040005;
         public static final int Shutdown_label=0x7f040004;
         public static final int Spectrum_label=0x7f040006;

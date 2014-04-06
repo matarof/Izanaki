@@ -15,6 +15,7 @@ public class FormantEstimator {
 	int cn;
 	int fs;
 	double formants[];
+	int treemapsize;
 	
 	public FormantEstimator(double[] c, int fs) {
 		// TODO Auto-generated constructor stub
@@ -40,12 +41,13 @@ public class FormantEstimator {
 		
 		Integer[] indices = sorter.values().toArray(new Integer[0]);
 		Double[] angz = sorter.keySet().toArray(new Double[0]);
+		treemapsize = sorter.size();  //Treemapではキーの重複が許されず、同じangz値が重なるとサイズが変化するため、都度配列の大きさを取得
 		
 		double[] frqs = new double[an];
 		double[] bw = new double[an];
 
 		int fn = 0;
-		for(int i=0; i<an-2; i++){
+		for(int i=0; i<treemapsize; i++){
 			
 			frqs[i] = angz[i]*(fs/(2*Math.PI));
 			bw[i] = -1/2*(fs/(2*Math.PI))* Math.log(roots[indices[i]].getMagnitude()); 

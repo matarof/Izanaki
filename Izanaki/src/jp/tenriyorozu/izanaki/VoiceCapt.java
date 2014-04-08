@@ -19,7 +19,7 @@ public class VoiceCapt implements Runnable {
 	private int fftSize;
 	AudioRecord audioRec = null;
 	private double[] window;
-	private int LPCOrder=30; //LPCŸ”
+	private int LPCOrder=35; //LPCŸ”
 	
 	
 	public SpectrumDraw spectrumDrawListner;

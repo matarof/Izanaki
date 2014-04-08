@@ -105,30 +105,24 @@ SurfaceHolder.Callback, SpectrumDraw {
 	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note, double[] formants, String vowel){
 
 		Paint paint = new Paint();
-		paint.setColor(Color.GREEN);
 		paint.setAntiAlias(true);
 		paint.setStrokeWidth(1);
 		canvas.drawColor(Color.BLACK);
 								
 		for(int i=0; i<bufSize2; i++){
-						
-			int y1 = (int)(Math.log10(buffer1[i])*20);	
-			canvas.drawLine(i, 470, i, 470-y1, paint);  //PowerSpectrum•`‰æ
-
+			paint.setColor(Color.GREEN);
+			paint.setStrokeWidth(1);
+			int y1 = (int)(Math.log10(buffer1[i])*20)*2;	
+			canvas.drawLine(i, 500, i, 500-y1, paint);  //PowerSpectrum•`‰æ
+			//canvas.drawPoint(i, 500-y1, paint);
 			int y2 =(int)(buffer2[i]*1.0E1);  
 			canvas.drawLine(i, 100, i, 100-y2, paint);  //CMSDF•`‰æ
-			
+			paint.setColor(Color.MAGENTA);
+			int y3 = (int)(buffer3[i]*2.5);	
+			//canvas.drawLine(i, 500, i, 470-y3-80, paint);  //LPC Spectrum•`‰æ
+			paint.setStrokeWidth(3);
+			canvas.drawPoint(i, 500-y3-80, paint);
 		}
-		
-		paint.setColor(Color.MAGENTA);
-		
-		for(int i=0; i<bufSize2; i++){
-			
-			int y1 = (int)(buffer3[i]);	
-			canvas.drawLine(i, 470, i, 470-y1-80, paint);  //LPC Spectrum•`‰æ
-
-		}
-		
 		
 			
 		paint.setTextSize(90);
@@ -149,39 +143,50 @@ SurfaceHolder.Callback, SpectrumDraw {
 		String strFor0 = exFormat.format(formants[0]);
 		String strFor1 = exFormat.format(formants[1]);
 		String strFor2 = exFormat.format(formants[2]);
+		String strFor3 = exFormat.format(formants[3]);
+		String strFor4 = exFormat.format(formants[4]);
+		
 		paint.setTextSize(30);
 		paint.setColor(Color.CYAN);
 		canvas.drawText(strRa, 380, 580, paint);
-		canvas.drawText(strFor0, 380, 640, paint);
-		canvas.drawText(strFor1, 380, 670, paint);
-		canvas.drawText(strFor2, 380, 700, paint);
-		canvas.drawText(vowel, 380, 730, paint);
+		canvas.drawText(strFor0, 380, 610, paint);
+		canvas.drawText(strFor1, 380, 640, paint);
+		canvas.drawText(strFor2, 380, 670, paint);
+		canvas.drawText(strFor3, 380, 700, paint);
+		canvas.drawText(strFor4, 380, 730, paint);
+		canvas.drawText(vowel, 380, 760, paint);
 		
 		paint.setTextSize(24);
 		paint.setColor(Color.CYAN);
 		canvas.drawText("HNR", 300, 580, paint);
-		canvas.drawText("F1", 300, 640, paint);
-		canvas.drawText("F2", 300, 670, paint);
-		canvas.drawText("F3", 300, 700, paint);
+		canvas.drawText("F1", 300, 610, paint);
+		canvas.drawText("F2", 300, 640, paint);
+		canvas.drawText("F3", 300, 670, paint);
+		canvas.drawText("F4", 300, 700, paint);
+		canvas.drawText("F5", 300, 730, paint);
 		paint.setColor(Color.GREEN);
 		canvas.drawText("CMSDF", 20, 30, paint);
-		canvas.drawText("PowerSpectrum", 20, 250, paint);
+		canvas.drawText("PowerSpectrum + LPC Spectrum", 20, 230, paint);
 		canvas.drawText("F0", 10, 580, paint);
 		paint.setTextSize(36);
 		canvas.drawText("Hz", 190, 700, paint);
 
 		
-		paint.setColor(Color.RED);
-		paint.setStrokeWidth(4);
+		
+		paint.setStrokeWidth(3);  //ƒ}[ƒJ[•`‰æ
 		if(peakIndex != 0){
+			paint.setColor(Color.RED);
 			canvas.drawLine(peakIndex, 0, peakIndex, 200, paint);
-			canvas.drawLine((int)formants[0]/(44100/fftsize), 320, (int)formants[0]/(44100/fftsize), 470, paint);
-			canvas.drawLine((int)formants[1]/(44100/fftsize), 320, (int)formants[1]/(44100/fftsize), 470, paint);
-			canvas.drawLine((int)formants[2]/(44100/fftsize), 320, (int)formants[2]/(44100/fftsize), 470, paint);
-			canvas.drawLine((int)formants[3]/(44100/fftsize), 320, (int)formants[3]/(44100/fftsize), 470, paint);
+			paint.setColor(Color.BLUE);
+			canvas.drawLine((int)formants[0]/(44100/fftsize), 300, (int)formants[0]/(44100/fftsize), 500, paint);
+			canvas.drawLine((int)formants[1]/(44100/fftsize), 300, (int)formants[1]/(44100/fftsize), 500, paint);
+			canvas.drawLine((int)formants[2]/(44100/fftsize), 300, (int)formants[2]/(44100/fftsize), 500, paint);
+			canvas.drawLine((int)formants[3]/(44100/fftsize), 300, (int)formants[3]/(44100/fftsize), 500, paint);
+			canvas.drawLine((int)formants[4]/(44100/fftsize), 300, (int)formants[4]/(44100/fftsize), 500, paint);
+			canvas.drawLine((int)formants[5]/(44100/fftsize), 300, (int)formants[5]/(44100/fftsize), 500, paint);
 			
-			paint.setColor(Color.CYAN);
-			canvas.drawLine(freq/(44100/fftsize), 320, freq/(44100/fftsize), 470, paint);
+			paint.setColor(Color.RED);
+			canvas.drawLine(freq/(44100/fftsize), 300, freq/(44100/fftsize), 500, paint);
 			
 		}
 

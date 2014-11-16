@@ -67,7 +67,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 	}
 	
 	@Override
-	public void surfaceDraw(double buffer1[], int bufSize, double buffer2[], int bufSize2, double buffer3[], int bufSize3, int peakIndex, double ra, double[] formants){
+	public void surfaceDraw(double buffer1[], int bufSize, double buffer2[], int bufSize2, double buffer3[], int bufSize3, int peakIndex, double[] formants){
 		
 		 if (!isAttached) {      //surfaceCreatedが呼ばれる前にlockCanvasするとエラーとなるためチェック
 	            return;  
@@ -81,7 +81,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		pitchTimeLine[pitchTimeLinePosition] = (int)freq;
 		switch(modeSelector){
 		case 0:
-			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, ra, freq, note, formants, vowel);
+			doSpectrumDraw(canvas, buffer1, bufSize, buffer2, bufSize2, buffer3, bufSize3, peakIndex, freq, note, formants, vowel);
 			break;
 		case 1:
 			doTimeLineDraw(canvas, peakIndex, freq, note, pitchTimeLine, pitchTimeLinePosition);
@@ -102,7 +102,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 	}
 
-	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, double ra, float freq, String note, double[] formants, String vowel){
+	private void doSpectrumDraw(Canvas canvas, double buffer1[], int bufSize1, double buffer2[], int bufSize2,  double buffer3[], int bufsize3, int peakIndex, float freq, String note, double[] formants, String vowel){
 
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
@@ -139,7 +139,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		canvas.drawText(note, 190, 590, paint);
 		
 		DecimalFormat exFormat = new DecimalFormat("###.#"); 
-		String strRa = exFormat.format(ra);
+		//String strRa = exFormat.format(ra);
 		String strFor0 = exFormat.format(formants[0]);
 		String strFor1 = exFormat.format(formants[1]);
 		String strFor2 = exFormat.format(formants[2]);
@@ -148,7 +148,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 		paint.setTextSize(30);
 		paint.setColor(Color.CYAN);
-		canvas.drawText(strRa, 380, 580, paint);
+		//canvas.drawText(strRa, 380, 580, paint);
 		canvas.drawText(strFor0, 380, 610, paint);
 		canvas.drawText(strFor1, 380, 640, paint);
 		canvas.drawText(strFor2, 380, 670, paint);
@@ -158,7 +158,7 @@ SurfaceHolder.Callback, SpectrumDraw {
 		
 		paint.setTextSize(24);
 		paint.setColor(Color.CYAN);
-		canvas.drawText("HNR", 300, 580, paint);
+		//canvas.drawText("HNR", 300, 580, paint);
 		canvas.drawText("F1", 300, 610, paint);
 		canvas.drawText("F2", 300, 640, paint);
 		canvas.drawText("F3", 300, 670, paint);

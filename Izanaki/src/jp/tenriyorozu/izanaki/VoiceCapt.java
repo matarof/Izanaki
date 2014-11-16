@@ -150,9 +150,9 @@ public class VoiceCapt implements Runnable {
 			logger.addSplit("ACF");
 			int peakIndex = find_dip(CMNDF, fftSize/2);
 			logger.addSplit("peak picking");
-			double ra = Ra(peakIndex, power, fftSize);
+			//double ra = Ra(peakIndex, power, fftSize);
 			logger.addSplit("HNR");
-			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, LPCSpectrum, fftSize/2, peakIndex, ra, formants);
+			this.spectrumDrawListner.surfaceDraw(power, fftSize/2, CMNDF, fftSize/2, LPCSpectrum, fftSize/2, peakIndex, formants);
 			logger.addSplit("surface draw");
 			logger.dumpToLog();
 		}
